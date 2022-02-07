@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
                 -65,43,-65,-85,-73,-7,109,-78,-36,-19,110,62,-53,117,111,77,79,-1,-39};
 
         FirebaseStorage.getInstance().getReference("emoji.jpg").putBytes(bytes);
-        String str = "111111111111111111" +
+        /*String str = "111111111111111111" +
                 "111111001111101111" +
                 "111111001111001111" +
                 "111111100111101111" +
@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
         for(Byte b: foto2){
             System.out.println(b);
         }
-        FirebaseStorage.getInstance().getReference("sentret.jpg").putBytes(foto2);
+        FirebaseStorage.getInstance().getReference("sentret.jpg").putBytes(foto2);*/
 
     }
 
