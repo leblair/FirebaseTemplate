@@ -37,13 +37,20 @@ public class NewPostFragment extends AppFragment {
             Glide.with(this).load(uri).into(binding.previsualizacion);
         });
 
+
         binding.publicar.setOnClickListener(view1 -> {
+            binding.publicar.setEnabled(false);
             //hacer una clase o hashmap para hacer el objeto
             Post post  = new Post();
             post.content = binding.contenido.getText().toString();
             post.authorName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
             post.date = LocalDateTime.now().toString();
-            FirebaseFirestore.getInstance().collection("posts").add(post);
+            FirebaseFirestore.getInstance().collection("posts")
+                    .add(post)
+                    .addOnCompleteListener(task -> {
+                        binding.publicar.setEnabled(true);
+                        navController.popBackStack();
+                    });
         });
     }
 
