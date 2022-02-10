@@ -1,5 +1,6 @@
 package com.example.firebasetemplate;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,12 +16,16 @@ import com.example.firebasetemplate.databinding.FragmentNewPostBinding;
 import com.example.firebasetemplate.model.Post;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class NewPostFragment extends AppFragment {
 
     private FragmentNewPostBinding binding;
+
+    private Uri uriImagen;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -35,22 +40,34 @@ public class NewPostFragment extends AppFragment {
 
         appViewModel.uriImagenSeleccionada.observe(getViewLifecycleOwner(), uri -> {
             Glide.with(this).load(uri).into(binding.previsualizacion);
+            uriImagen = uri;
         });
 
 
         binding.publicar.setOnClickListener(view1 -> {
             binding.publicar.setEnabled(false);
-            //hacer una clase o hashmap para hacer el objeto
-            Post post  = new Post();
-            post.content = binding.contenido.getText().toString();
-            post.authorName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
-            post.date = LocalDateTime.now().toString();
-            FirebaseFirestore.getInstance().collection("posts")
-                    .add(post)
-                    .addOnCompleteListener(task -> {
-                        binding.publicar.setEnabled(true);
-                        navController.popBackStack();
+
+            FirebaseStorage.getInstance()
+                    .getReference("/images/" + UUID.randomUUID() + ".jpg")
+                    .putFile(uriImagen)
+                    .continueWithTask(task -> task.getResult().getStorage().getDownloadUrl())
+                    .addOnSuccessListener(urlDescarga -> {
+                        Post post = new Post();
+                        post.content = binding.contenido.getText().toString();
+                        post.authorName = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+                        post.date = LocalDateTime.now().toString();
+                        post.imageUrl = urlDescarga.toString();
+
+                        FirebaseFirestore.getInstance().collection("posts")
+                                .add(post)
+                                .addOnCompleteListener(task -> {
+                                    binding.publicar.setEnabled(true);
+                                    navController.popBackStack();
+                                });
                     });
+            //hacer una clase o hashmap para hacer el objeto
+
+
         });
     }
 
