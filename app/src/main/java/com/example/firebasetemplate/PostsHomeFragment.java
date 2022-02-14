@@ -43,7 +43,11 @@ public class PostsHomeFragment extends AppFragment {
         setQuery().addSnapshotListener((collectionSnapshot, e) -> {
             postsList.clear();
             for (DocumentSnapshot documentSnapshot: collectionSnapshot) {
-                postsList.add(documentSnapshot.toObject(Post.class));
+                documentSnapshot.getId();
+                Post post = documentSnapshot.toObject(Post.class);
+                post.postid = documentSnapshot.getId();
+                postsList.add(post);
+
             }
             adapter.notifyDataSetChanged();
         });
@@ -65,9 +69,17 @@ public class PostsHomeFragment extends AppFragment {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            Post post = postsList.get(position);
+
             holder.binding.contenido.setText(postsList.get(position).content);
             holder.binding.autor.setText(postsList.get(position).authorName);
             Glide.with(requireContext()).load(postsList.get(position).imageUrl).into(holder.binding.imagen);
+            holder.binding.favorito.setOnClickListener(v -> {
+                db.collection("posts").document()
+                        .update("Likes."+ auth.getUid(), true);
+            });
+
+            holder.binding.favorito.setChecked(post.likes.containsKey(auth.getUid()));
         }
 
         @Override
