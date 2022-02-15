@@ -23,6 +23,7 @@ import java.util.UUID;
 
 public class NewPostFragment extends AppFragment {
 
+    //en sql nunca se duplican los datos, en no sql se duplican tanto como pueden
     private FragmentNewPostBinding binding;
 
     private Uri uriImagen;
@@ -35,12 +36,13 @@ public class NewPostFragment extends AppFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         binding.previsualizacion.setOnClickListener(v -> seleccionarImagen());
 
         appViewModel.uriImagenSeleccionada.observe(getViewLifecycleOwner(), uri -> {
-            Glide.with(this).load(uri).into(binding.previsualizacion);
-            uriImagen = uri;
+            if(uriImagen!=null) {
+                Glide.with(this).load(uri).into(binding.previsualizacion);
+                uriImagen = uri;
+            }
         });
 
 
@@ -66,8 +68,6 @@ public class NewPostFragment extends AppFragment {
                                 });
                     });
             //hacer una clase o hashmap para hacer el objeto
-
-
         });
     }
 
@@ -76,6 +76,7 @@ public class NewPostFragment extends AppFragment {
     }
 
     private final ActivityResultLauncher<String> galeria = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
+        uriImagen = uri;
         appViewModel.setUriImagenSeleccionada(uri);
     });
 }

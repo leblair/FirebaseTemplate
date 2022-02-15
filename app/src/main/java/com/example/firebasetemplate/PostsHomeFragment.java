@@ -14,6 +14,7 @@ import com.example.firebasetemplate.databinding.FragmentPostsBinding;
 import com.example.firebasetemplate.databinding.ViewholderPostBinding;
 import com.example.firebasetemplate.model.Post;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
@@ -43,11 +44,9 @@ public class PostsHomeFragment extends AppFragment {
         setQuery().addSnapshotListener((collectionSnapshot, e) -> {
             postsList.clear();
             for (DocumentSnapshot documentSnapshot: collectionSnapshot) {
-                documentSnapshot.getId();
                 Post post = documentSnapshot.toObject(Post.class);
                 post.postid = documentSnapshot.getId();
                 postsList.add(post);
-
             }
             adapter.notifyDataSetChanged();
         });
@@ -75,8 +74,9 @@ public class PostsHomeFragment extends AppFragment {
             holder.binding.autor.setText(postsList.get(position).authorName);
             Glide.with(requireContext()).load(postsList.get(position).imageUrl).into(holder.binding.imagen);
             holder.binding.favorito.setOnClickListener(v -> {
-                db.collection("posts").document()
-                        .update("Likes."+ auth.getUid(), true);
+                db.collection("posts").document(post.postid)
+                        .update("likes."+ auth.getUid(),
+                                !post.likes.containsKey(auth.getUid()) ? true : FieldValue.delete());
             });
 
             holder.binding.favorito.setChecked(post.likes.containsKey(auth.getUid()));
