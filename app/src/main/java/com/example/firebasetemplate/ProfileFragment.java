@@ -1,18 +1,14 @@
 package com.example.firebasetemplate;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.firebasetemplate.databinding.FragmentPostsBinding;
-import com.example.firebasetemplate.databinding.FragmentProfileBinding;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
+import com.example.firebasetemplate.databinding.FragmentProfileBinding;
 
 public class ProfileFragment extends AppFragment {
     private FragmentProfileBinding binding;
@@ -27,4 +23,5 @@ public class ProfileFragment extends AppFragment {
         super.onViewCreated(view, savedInstanceState);
 
     }
+    //aqui quiere el nombre mail y foto
 }

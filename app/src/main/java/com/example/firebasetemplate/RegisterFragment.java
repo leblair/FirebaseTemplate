@@ -20,6 +20,8 @@ import com.google.firebase.auth.FirebaseAuth;
 public class RegisterFragment extends AppFragment {
     private FragmentRegisterBinding binding;
 
+    //pedir nombre y foto aparte del email
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return (binding = FragmentRegisterBinding.inflate(inflater, container, false)).getRoot();
