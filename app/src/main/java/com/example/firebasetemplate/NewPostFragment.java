@@ -36,7 +36,7 @@ public class NewPostFragment extends AppFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        binding.previsualizacion.setOnClickListener(v -> seleccionarImagen());
+        binding.previsualizacion.setOnClickListener(v -> galeria.launch("image/*"));
 
         appViewModel.uriImagenSeleccionada.observe(getViewLifecycleOwner(), uri -> {
             if(uriImagen!=null) {
@@ -69,10 +69,6 @@ public class NewPostFragment extends AppFragment {
                     });
             //hacer una clase o hashmap para hacer el objeto
         });
-    }
-
-    private void seleccionarImagen() {
-        galeria.launch("image/*");
     }
 
     private final ActivityResultLauncher<String> galeria = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
