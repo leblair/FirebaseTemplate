@@ -1,5 +1,6 @@
 package com.example.firebasetemplate;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,13 +21,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 
 public class RegisterFragment extends AppFragment {
     private FragmentRegisterBinding binding;
-
+    private Uri uriImagen;
     //pedir nombre y foto aparte del email
 
     @Override
@@ -38,9 +38,14 @@ public class RegisterFragment extends AppFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        appViewModel.uriImagenSeleccionada.observe(getViewLifecycleOwner(), uri -> {
+            if(uriImagen!=null) {
+                Glide.with(this).load(uri).into(binding.imageView);
+                uriImagen = uri;
+            }
+        });
 
-        binding.imageView.setOnClickListener(v ->);
-        appViewModel.
+        //appViewModel.
         binding.createAccountButton.setOnClickListener(v -> {
             if (binding.emailEditText.getText().toString().isEmpty()){
                 binding.emailEditText.setError("Required email");
@@ -60,17 +65,37 @@ public class RegisterFragment extends AppFragment {
 
                         FirebaseStorage.getInstance()
                                 .getReference("/images/" + UUID.randomUUID() + ".jpg")
+                                .putFile(uriImagen)
+                                .continueWithTask(task2 -> task2.getResult().getStorage().getDownloadUrl())
+                                .addOnSuccessListener(urlDescarga -> {
+                                    Post post = new Post();
+//                        post.content = binding.contenido.getText().toString();
+//                        post.authorName = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+//                        post.date = LocalDateTime.now().toString();
+                                    post.imageUrl = urlDescarga.toString();
+
+                                    FirebaseFirestore.getInstance().collection("posts")
+                                            .add(post)
+                                            .addOnCompleteListener(task3 -> {
+                                                binding.createAccountButton.setEnabled(true);
+                                                navController.popBackStack();
+                                            });
+                                });
+
+
+                        FirebaseStorage.getInstance()
+                                .getReference("/images/" + UUID.randomUUID() + ".jpg")
                                 .putFile(task.getResult().getUser().getPhotoUrl())
                                 .continueWithTask(t -> t.getResult().getStorage().getDownloadUrl())
                                 .addOnSuccessListener(urlDescarga -> {
-                                    Post post = new Post();
+                                    /*Post post = new Post();
                                     post.content = binding.contenido.getText().toString();
                                     post.authorName = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-                                    post.date = LocalDateTime.now().toString();
+                                    post.date = LocalDateTime.now().toString();*/
+
+                                    Post post = new Post();
                                     post.imageUrl = urlDescarga.toString();
-
-
-
+                                    binding.imageView
                                     FirebaseFirestore.getInstance().collection("posts")
                                             .add(post)
                                             .addOnCompleteListener(task -> {
