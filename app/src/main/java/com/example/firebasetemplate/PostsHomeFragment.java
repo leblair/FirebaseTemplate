@@ -1,5 +1,6 @@
 package com.example.firebasetemplate;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,9 @@ import com.google.firebase.firestore.Query;
 import java.util.ArrayList;
 import java.util.List;
 
+//guardar comentarios en post
+//hacer una coleccion en firebase con los campos del comentario
+
 public class PostsHomeFragment extends AppFragment {
 
     private FragmentPostsBinding binding;
@@ -36,10 +40,8 @@ public class PostsHomeFragment extends AppFragment {
         super.onViewCreated(view, savedInstanceState);
 
         binding.fab.setOnClickListener(v -> navController.navigate(R.id.newPostFragment));
-            //get() lo hace  una vez y addSnapshot lo hace periodicamente
 
         binding.postsRecyclerView.setAdapter(adapter = new PostsAdapter());
-
 
         setQuery().addSnapshotListener((collectionSnapshot, e) -> {
             postsList.clear();
@@ -51,14 +53,14 @@ public class PostsHomeFragment extends AppFragment {
             adapter.notifyDataSetChanged();
         });
 
+
     }
 
-    Query setQuery(){
+    Query setQuery() {
         return db.collection("posts");
     }
 
-
-    class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
+    class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> {
 
         @NonNull
         @Override
@@ -69,13 +71,20 @@ public class PostsHomeFragment extends AppFragment {
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             Post post = postsList.get(position);
+            holder.binding.contenido.setText(post.content);
+            holder.binding.autor.setText(post.authorName);
+            holder.binding.postLayout.setOnClickListener(v -> {
+                Intent intent = new Intent(getContext(),PostDetails.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("post",post);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            });
+            Glide.with(requireContext()).load(post.imageUrl).into(holder.binding.imagen);
 
-            holder.binding.contenido.setText(postsList.get(position).content);
-            holder.binding.autor.setText(postsList.get(position).authorName);
-            Glide.with(requireContext()).load(postsList.get(position).imageUrl).into(holder.binding.imagen);
             holder.binding.favorito.setOnClickListener(v -> {
                 db.collection("posts").document(post.postid)
-                        .update("likes."+ auth.getUid(),
+                        .update("likes."+auth.getUid(),
                                 !post.likes.containsKey(auth.getUid()) ? true : FieldValue.delete());
             });
 

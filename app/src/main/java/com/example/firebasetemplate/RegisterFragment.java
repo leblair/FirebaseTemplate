@@ -83,15 +83,15 @@ public class RegisterFragment extends AppFragment {
                                 });
 
 
-                        FirebaseStorage.getInstance()
+                        /*FirebaseStorage.getInstance()
                                 .getReference("/images/" + UUID.randomUUID() + ".jpg")
                                 .putFile(task.getResult().getUser().getPhotoUrl())
                                 .continueWithTask(t -> t.getResult().getStorage().getDownloadUrl())
                                 .addOnSuccessListener(urlDescarga -> {
-                                    /*Post post = new Post();
+                                    *//*Post post = new Post();
                                     post.content = binding.contenido.getText().toString();
                                     post.authorName = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-                                    post.date = LocalDateTime.now().toString();*/
+                                    post.date = LocalDateTime.now().toString();*//*
 
                                     Post post = new Post();
                                     post.imageUrl = urlDescarga.toString();
@@ -102,7 +102,7 @@ public class RegisterFragment extends AppFragment {
                                                 binding.publicar.setEnabled(true);
                                                 navController.popBackStack();
                                             });
-                                });
+                                });*/
                             //actualizo el perfil, el nombre la url de su de perfil
 
 
@@ -116,3 +116,5 @@ public class RegisterFragment extends AppFragment {
         });
     }
 }
+
+
