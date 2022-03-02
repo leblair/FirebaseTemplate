@@ -1,6 +1,5 @@
 package com.example.firebasetemplate;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +7,10 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -74,11 +77,18 @@ public class PostsHomeFragment extends AppFragment {
             holder.binding.contenido.setText(post.content);
             holder.binding.autor.setText(post.authorName);
             holder.binding.postLayout.setOnClickListener(v -> {
-                Intent intent = new Intent(getContext(),PostDetails.class);
+                /*Intent intent = new Intent(getContext(),PostDetails.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("post",post);
                 intent.putExtras(bundle);
-                startActivity(intent);
+                startActivity(intent);*/
+                Fragment newFragment = PostDetail.newInstance(post);
+                FragmentManager fragmentManager = ((FragmentActivity)binding.getRoot().getContext()).getSupportFragmentManager();
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                transaction.replace(R.id.nav_host_fragment, newFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+
             });
             Glide.with(requireContext()).load(post.imageUrl).into(holder.binding.imagen);
 
