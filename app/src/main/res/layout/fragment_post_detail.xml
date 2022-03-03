@@ -51,13 +51,27 @@
                     android:layout_height="196dp"
                     android:adjustViewBounds="true"/>
 
-                <com.google.android.material.checkbox.MaterialCheckBox
-                    android:id="@+id/favos"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:button="@drawable/like"
-                    app:useMaterialThemeColors="false"
-                    android:paddingLeft="8sp"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.checkbox.MaterialCheckBox
+                        android:id="@+id/favos"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:button="@drawable/like"
+                        android:paddingLeft="8sp"
+                        app:useMaterialThemeColors="false" />
+
+                    <TextView
+                        android:id="@+id/numFav"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="TextView" />
+                </LinearLayout>
+
             </LinearLayout>
         </LinearLayout>
 

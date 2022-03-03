@@ -11,11 +11,12 @@ import androidx.annotation.Nullable;
 import com.bumptech.glide.Glide;
 import com.example.firebasetemplate.databinding.FragmentPostDetailBinding;
 import com.example.firebasetemplate.model.Post;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.firestore.FieldValue;
 
 
 public class PostDetailFragment extends AppFragment {
-
+    private Post post;
     private FragmentPostDetailBinding binding;
 
     @Override
@@ -32,7 +33,7 @@ public class PostDetailFragment extends AppFragment {
         String postid = PostDetailFragmentArgs.fromBundle(getArguments()).getPostid();
 
         db.collection("posts").document(postid).get().addOnSuccessListener(documentSnapshot -> {
-            Post post = documentSnapshot.toObject(Post.class);
+            post = documentSnapshot.toObject(Post.class);
             binding.contenido.setText(post.content);
             binding.autor.setText(post.authorName);
             Glide.with(requireContext()).load(post.imageUrl).into(binding.imagen);
@@ -41,9 +42,23 @@ public class PostDetailFragment extends AppFragment {
                 db.collection("posts").document(postid)
                         .update("likes."+auth.getUid(),
                                 !post.likes.containsKey(auth.getUid()) ? true : FieldValue.delete());
+
+
+
+                /* db.collection("posts").document(postid).get().addOnSuccessListener(documentSnapshot1 -> {
+                    binding.numFav.setText(String.valueOf(documentSnapshot1.toObject(Post.class).likes.size()));
+                    Toast.makeText(getContext(),String.valueOf(documentSnapshot1.toObject(Post.class).likes.size()), Toast.LENGTH_SHORT).show();
+                });*/
             });
 
             binding.favos.setChecked(post.likes.containsKey(auth.getCurrentUser().getUid()));
+            binding.numFav.setText(String.valueOf(post.likes.size()));
+
+
         });
+    }
+    @Override
+    public void onDataChange(DataSnapshot dataSnapshot) {
+
     }
 }
