@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".PostDetail">
+    tools:context=".PostDetailFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <LinearLayout
@@ -52,7 +52,7 @@
                     android:adjustViewBounds="true"/>
 
                 <com.google.android.material.checkbox.MaterialCheckBox
-                    android:id="@+id/favorito"
+                    android:id="@+id/favos"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:button="@drawable/like"
