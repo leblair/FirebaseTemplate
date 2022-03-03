@@ -77,11 +77,6 @@ public class PostsHomeFragment extends AppFragment {
             holder.binding.contenido.setText(post.content);
             holder.binding.autor.setText(post.authorName);
             holder.binding.postLayout.setOnClickListener(v -> {
-                /*Intent intent = new Intent(getContext(),PostDetails.class);
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("post",post);
-                intent.putExtras(bundle);
-                startActivity(intent);*/
                 Fragment newFragment = PostDetail.newInstance(post);
                 FragmentManager fragmentManager = ((FragmentActivity)binding.getRoot().getContext()).getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
