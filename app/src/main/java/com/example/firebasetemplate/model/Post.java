@@ -15,7 +15,7 @@ public class Post implements Serializable {
 
 
     public HashMap<String, Boolean> likes = new HashMap<>();
-    public List<Comments> comments = new ArrayList<>();
+    public List<Comment> comments = new ArrayList<>();
 
 
 }

@@ -1,11 +1,11 @@
 package com.example.firebasetemplate.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 
-public class Comments {
+public class Comment {
     public String authorName;
     public String text;
     public HashMap<String, Boolean> likes = new HashMap<>();
-    public Date day;
+    public LocalDateTime day;
 }
