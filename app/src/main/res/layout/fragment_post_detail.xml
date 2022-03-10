@@ -84,7 +84,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/inputComment"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -101,14 +101,15 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginBottom="5dp"
                 android:layout_weight="1"
-                android:scaleType="centerCrop"
+                android:scaleType="fitXY"
                 android:src="@drawable/ic_baseline_add_comment_24" />
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/commentsRecycler"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="300dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
     </LinearLayout>
 
