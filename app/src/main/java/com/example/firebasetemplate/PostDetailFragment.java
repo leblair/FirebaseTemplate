@@ -26,6 +26,7 @@ public class PostDetailFragment extends AppFragment {
     private Post post;
     private FragmentPostDetailBinding binding;
     private ArrayList<Comment> comments = new ArrayList<Comment>();
+    CommentsAdapter commentsAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -39,6 +40,8 @@ public class PostDetailFragment extends AppFragment {
         super.onViewCreated(view, savedInstanceState);
 
         String postid = PostDetailFragmentArgs.fromBundle(getArguments()).getPostid();
+        commentsAdapter = new CommentsAdapter(comments, getContext());
+        binding.commentsRecycler.setAdapter(commentsAdapter);
 
         db.collection("posts").document(postid).addSnapshotListener((documentSnapshot, error) -> {
             post = documentSnapshot.toObject(Post.class);
@@ -51,48 +54,43 @@ public class PostDetailFragment extends AppFragment {
                         .update("likes." + auth.getUid(),
                                 !post.likes.containsKey(auth.getUid()) ? true : FieldValue.delete());
 
-
-
-
-                /* db.collection("posts").document(postid).get().addOnSuccessListener(documentSnapshot1 -> {
-                    binding.numFav.setText(String.valueOf(documentSnapshot1.toObject(Post.class).likes.size()));
-                    Toast.makeText(getContext(),String.valueOf(documentSnapshot1.toObject(Post.class).likes.size()), Toast.LENGTH_SHORT).show();
-                });*/
             });
 
 
             binding.favos.setChecked(post.likes.containsKey(auth.getCurrentUser().getUid()));
             binding.numFav.setText(String.valueOf(post.likes.size()));
+            FirebaseFirestore.getInstance().collection("posts").document(postid).collection("comments").addSnapshotListener((collectionSnapshot, error1) -> {
+                for (DocumentSnapshot documentSnapshot1 : collectionSnapshot) {
+                    Comment comment = documentSnapshot1.toObject(Comment.class);
+                    comment.id = documentSnapshot1.getId();
+                    comment.postId = postid;
+                    comments.add(comment);
+                }
+                commentsAdapter.notifyDataSetChanged();
+            });
+
 
 
             binding.addComment.setOnClickListener(v -> {
                 //add comment
-
                 Comment comment = new Comment();
                 comment.authorName = auth.getCurrentUser().getEmail();
-//                comment.day = LocalDateTime.now();
                 comment.text = binding.inputComment2.getText().toString();
-                //post.comments.add(comment);
-
+                comments.clear();
                 FirebaseFirestore.getInstance().collection("posts").document(postid).collection("comments").add(comment).addOnCompleteListener(task -> {
                     binding.inputComment.getEditText().setText("");
                 });
+                commentsAdapter.notifyDataSetChanged();
+
 
             });
 
 
         });
 
-        FirebaseFirestore.getInstance().collection("posts").document(postid).collection("comments").addSnapshotListener((collectionSnapshot, error1) -> {
-            for (DocumentSnapshot documentSnapshot1 : collectionSnapshot) {
-                Comment comment = documentSnapshot1.toObject(Comment.class);
-                comment.id = documentSnapshot1.getId();
-                comment.postId = postid;
-                comments.add(comment);
-            }
-        });
-        CommentsAdapter commentsAdapter = new CommentsAdapter(comments, getContext());
-        binding.commentsRecycler.setAdapter(commentsAdapter);
+
+
+
     }
 
     class CommentsAdapter extends RecyclerView.Adapter<PostDetailFragment.CommentsAdapter.ViewHolder> {
@@ -115,17 +113,18 @@ public class PostDetailFragment extends AppFragment {
         public void onBindViewHolder(@NonNull PostDetailFragment.CommentsAdapter.ViewHolder holder, int position) {
             Comment comment = comments.get(position);
             db.collection("posts").document(comment.postId).collection("comments").document(comment.id).addSnapshotListener((documentSnapshot, error) -> {
+                Comment comment2 = documentSnapshot.toObject(Comment.class);
                 holder.binding.autor.setText(comment.authorName);
                 holder.binding.comentario.setText(comment.text);
-    //            holder.binding.fecha.setText(comment.text);
+    //          holder.binding.fecha.setText(comment.text);
 
                 holder.binding.checkBox2.setOnClickListener(v -> {
                     db.collection("posts").document(comment.postId).collection("comments").document(comment.id)
                             .update("likes."+auth.getUid(),
-                                    !comment.likes.containsKey(auth.getUid()) ? true : FieldValue.delete());
+                                    !comment2.likes.containsKey(auth.getUid()) ? true : FieldValue.delete());
                 });
-                holder.binding.numlikes.setText(String.valueOf(comment.likes.size()));
-                holder.binding.checkBox2.setChecked(comment.likes.containsKey(auth.getUid()));
+                holder.binding.checkBox2.setChecked(comment2.likes.containsKey(auth.getUid()));
+                holder.binding.numlikes.setText(String.valueOf(comment2.likes.size()));
             });
         }
 
