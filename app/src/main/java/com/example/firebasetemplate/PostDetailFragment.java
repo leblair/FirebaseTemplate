@@ -20,25 +20,28 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.time.LocalDateTime;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class PostDetailFragment extends AppFragment {
+
+    private final long createdMillis = System.currentTimeMillis();
+
+
     private Post post;
     private FragmentPostDetailBinding binding;
     private ArrayList<Comment> comments = new ArrayList<Comment>();
     CommentsAdapter commentsAdapter;
     String postid;
-    boolean cont = false;         
+    boolean cont = false;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return (binding = FragmentPostDetailBinding.inflate(inflater, container, false)).getRoot();
-
-
 
 
     }
@@ -70,20 +73,16 @@ public class PostDetailFragment extends AppFragment {
             binding.numFav.setText(String.valueOf(post.likes.size()));
 
 
-
-
-
-               FirebaseFirestore.getInstance().collection("posts").document(postid).collection("comments").addSnapshotListener((collectionSnapshot, error1) -> {
-                   comments.clear(); 
-                   for (DocumentSnapshot documentSnapshot1 : collectionSnapshot) {
-                       Comment comment = documentSnapshot1.toObject(Comment.class);
-                       comment.id = documentSnapshot1.getId();
-                       comment.postId = postid;
-                       comments.add(comment);
-                   }
-                   commentsAdapter.notifyDataSetChanged();
-               });
-           
+            FirebaseFirestore.getInstance().collection("posts").document(postid).collection("comments").addSnapshotListener((collectionSnapshot, error1) -> {
+                comments.clear();
+                for (DocumentSnapshot documentSnapshot1 : collectionSnapshot) {
+                    Comment comment = documentSnapshot1.toObject(Comment.class);
+                    comment.id = documentSnapshot1.getId();
+                    comment.postId = postid;
+                    comments.add(comment);
+                }
+                commentsAdapter.notifyDataSetChanged();
+            });
 
 
             binding.addComment.setOnClickListener(v -> {
@@ -92,7 +91,13 @@ public class PostDetailFragment extends AppFragment {
                 comment.authorName = auth.getCurrentUser().getEmail();
                 comment.text = binding.inputComment2.getText().toString();
 
-                comment.date = LocalDateTime.now().toString();
+
+                Date date = new Date();
+                SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+                comment.date = formatter.format(date);
+
+
+
                 comments.clear();
                 FirebaseFirestore.getInstance().collection("posts").document(postid).collection("comments").add(comment).addOnCompleteListener(task -> {
                     binding.inputComment.getEditText().setText("");
@@ -107,6 +112,7 @@ public class PostDetailFragment extends AppFragment {
 
 
     }
+
 
     class CommentsAdapter extends RecyclerView.Adapter<PostDetailFragment.CommentsAdapter.ViewHolder> {
         private ArrayList<Comment> comments;
@@ -140,6 +146,7 @@ public class PostDetailFragment extends AppFragment {
                 });
                 holder.binding.checkBox2.setChecked(comment2.likes.containsKey(auth.getUid()));
                 holder.binding.numlikes.setText(String.valueOf(comment2.likes.size()));
+
                 holder.binding.fecha.setText(comment2.date);
             });
         }
