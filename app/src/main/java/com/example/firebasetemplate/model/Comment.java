@@ -7,5 +7,6 @@ public class Comment {
     public String authorName;
     public String text;
     public String postId;
+    public String date;
     public HashMap<String, Boolean> likes = new HashMap<>();
 }
