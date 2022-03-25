@@ -16,7 +16,7 @@
         <ImageView
             android:id="@+id/autorFoto"
             android:layout_width="60dp"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:adjustViewBounds="true"
             app:srcCompat="@drawable/ic_baseline_face_24" />
 

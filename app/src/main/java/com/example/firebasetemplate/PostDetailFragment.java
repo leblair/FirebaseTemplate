@@ -57,6 +57,8 @@ public class PostDetailFragment extends AppFragment {
 
         db.collection("posts").document(postid).addSnapshotListener((documentSnapshot, error) -> {
             post = documentSnapshot.toObject(Post.class);
+            Glide.with(getContext()).load(post.imageUser).centerCrop().into(binding.autorFoto);
+
             binding.contenido.setText(post.content);
             binding.autor.setText(post.authorName);
             Glide.with(getContext()).load(post.imageUrl).into(binding.imagen);

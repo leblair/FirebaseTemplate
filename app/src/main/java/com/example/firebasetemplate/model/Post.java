@@ -10,6 +10,7 @@ public class Post implements Serializable {
     public String authorName;
     public String date;
     public String imageUrl;
+    public String imageUser;
     public HashMap<String, Boolean> likes = new HashMap<>();
 
 

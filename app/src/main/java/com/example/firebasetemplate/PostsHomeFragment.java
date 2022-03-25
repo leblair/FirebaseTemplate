@@ -20,8 +20,6 @@ import com.google.firebase.firestore.Query;
 import java.util.ArrayList;
 import java.util.List;
 
-//guardar comentarios en post
-//hacer una coleccion en firebase con los campos del comentario
 
 public class PostsHomeFragment extends AppFragment {
 
@@ -78,6 +76,7 @@ public class PostsHomeFragment extends AppFragment {
                 navController.navigate(action);
 
             });
+            Glide.with(getContext()).load(post.imageUser).centerCrop().into(holder.binding.autorFoto);
             Glide.with(requireContext()).load(post.imageUrl).into(holder.binding.imagen);
 
             holder.binding.favorito.setOnClickListener(v -> {

@@ -23,7 +23,6 @@ import java.util.UUID;
 
 public class NewPostFragment extends AppFragment {
 
-    //en sql nunca se duplican los datos, en no sql se duplican tanto como pueden
     private FragmentNewPostBinding binding;
 
     private Uri uriImagen;
@@ -59,6 +58,7 @@ public class NewPostFragment extends AppFragment {
                         post.authorName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
                         post.date = LocalDateTime.now().toString();
                         post.imageUrl = urlDescarga.toString();
+                        post.imageUser = auth.getCurrentUser().getPhotoUrl().toString();
 
                         FirebaseFirestore.getInstance().collection("posts")
                                 .add(post)
@@ -67,7 +67,6 @@ public class NewPostFragment extends AppFragment {
                                     navController.popBackStack();
                                 });
                     });
-            //hacer una clase o hashmap para hacer el objeto
         });
     }
 
